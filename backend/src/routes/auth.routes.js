@@ -9,8 +9,8 @@ import {
   getProfile,
   forgotPasswordRequest,
   changeCurrentPassword,
-  generateApiKey,
-  revokeApiKey,
+  // generateApiKey,
+  // revokeApiKey,
 } from "../controllers/auth.controllers.js";
 import { validate } from "../middlewares/validators.middlewares.js";
 import {
@@ -29,8 +29,8 @@ const router = Router();
 router.post("/register", userRegistrationValidator(), validate, registerUser);
 router.get("/verify-email", verifyEmail);
 router.post("/login", userLoginValidator(), validate, loginUser);
-router.post("/api-key", verifyAccessToken, generateApiKey);
-router.post("/api-key/revoke", verifyAccessToken, revokeApiKey);
+// router.post("/api-key", verifyAccessToken, generateApiKey);
+// router.post("/api-key/revoke", verifyAccessToken, revokeApiKey);
 router.post("/resend-verification", resendVerifyEmail);
 router.post("/forgot-password", forgotPasswordRequest);
 router.post("/change-password", changeCurrentPassword);

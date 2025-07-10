@@ -1,6 +1,8 @@
 import app from "./app.js";
 import dotenv from "dotenv";
 import connectDB from "./db/dbConnect.js";
+import "./config/cloudinary.config.js";
+
 
 dotenv.config({
   path: "./.env",

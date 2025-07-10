@@ -252,48 +252,48 @@ const getProfile = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, { user }));
 });
 
-const generateApiKey = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
+// const generateApiKey = asyncHandler(async (req, res) => {
+//   const userId = req.user._id;
 
-  // Optionally revoke existing keys
-  await APIKey.updateMany({ user: userId }, { isActive: false });
+//   // Optionally revoke existing keys
+//   await APIKey.updateMany({ user: userId }, { isActive: false });
 
-  // 1. Generate raw key
-  const rawKey = APIKey.generateKey();
+//   // 1. Generate raw key
+//   const rawKey = APIKey.generateKey();
 
-  // 2. Hash key to store in DB
-  const hashedKey = APIKey.hashKey(rawKey);
+//   // 2. Hash key to store in DB
+//   const hashedKey = APIKey.hashKey(rawKey);
 
-  // 3. Save hashed key
-  const apiKey = await APIKey.create({
-    key: hashedKey,
-    user: userId,
-    expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000, // 30 days
-    isActive: true,
-  });
+//   // 3. Save hashed key
+//   const apiKey = await APIKey.create({
+//     key: hashedKey,
+//     user: userId,
+//     expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000, // 30 days
+//     isActive: true,
+//   });
 
-  // 4. Return only raw key in response
-  return res
-    .status(201)
-    .json(new ApiResponse(201, { apiKey: rawKey }, "API key generated"));
-});
+//   // 4. Return only raw key in response
+//   return res
+//     .status(201)
+//     .json(new ApiResponse(201, { apiKey: rawKey }, "API key generated"));
+// });
 
-const revokeApiKey = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
+// const revokeApiKey = asyncHandler(async (req, res) => {
+//   const userId = req.user._id;
 
-  const apiKey = await APIKey.findOne({ user: userId, isActive: true });
+//   const apiKey = await APIKey.findOne({ user: userId, isActive: true });
 
-  if (!apiKey) {
-    throw new ApiError(404, "Active API key not found");
-  }
+//   if (!apiKey) {
+//     throw new ApiError(404, "Active API key not found");
+//   }
 
-  apiKey.isActive = false;
-  await apiKey.save();
+//   apiKey.isActive = false;
+//   await apiKey.save();
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "API key revoked successfully"));
-});
+//   return res
+//     .status(200)
+//     .json(new ApiResponse(200, {}, "API key revoked successfully"));
+// });
 
 export {
   registerUser,
@@ -305,6 +305,6 @@ export {
   getProfile,
   forgotPasswordRequest,
   changeCurrentPassword,
-  generateApiKey,
-  revokeApiKey,
+  // generateApiKey,
+  // revokeApiKey,
 };

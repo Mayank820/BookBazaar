@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/async-handler.js";
 import { ApiError } from "../utils/api-errors.js";
 
 export const verifyAccessToken = asyncHandler(async (req, res, next) => {
+  console.log("🛡️ Reached verifyAccessToken");
   const authHeader = req.headers.authorization;
 
   // Check for token in header
@@ -30,6 +31,7 @@ export const verifyAccessToken = asyncHandler(async (req, res, next) => {
 });
 
 export const isAdmin = (req, res, next) => {
+  console.log("👑 Reached isAdmin");
   if (req.user?.role !== "admin") {
     throw new ApiError(403, "Forbidden: Admins only");
   }

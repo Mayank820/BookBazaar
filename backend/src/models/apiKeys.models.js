@@ -1,10 +1,10 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import crypto from "crypto";
 
-const apiKeySchema = new Schema(
+const apiKeySchema = new mongoose.Schema(
   {
     key: {
-      type: String,
+      type: String, // hashed
       required: true,
       unique: true,
     },
@@ -17,10 +17,6 @@ const apiKeySchema = new Schema(
       type: Boolean,
       default: true,
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
     expiresAt: {
       type: Date,
       default: () => Date.now() + 30 * 24 * 60 * 60 * 1000, // 30 days
@@ -29,18 +25,13 @@ const apiKeySchema = new Schema(
   { timestamps: true },
 );
 
-// Static method to generate API key
-apiKeySchema.statics.generateKey = function () {
-  return crypto.randomBytes(32).toString("hex"); // 64-char raw key
+// Static methods
+apiKeySchema.statics.generateRawKey = function () {
+  return crypto.randomBytes(32).toString("hex"); // 64 char
 };
 
-apiKeySchema.statics.hashKey = function (key) {
-  return crypto.createHash("sha256").update(key).digest("hex");
-};
-
-apiKeySchema.statics.verifyKey = async function (plainKey) {
-  const hashed = this.hashKey(plainKey);
-  return await this.findOne({ key: hashed, isActive: true });
+apiKeySchema.statics.hashKey = function (rawKey) {
+  return crypto.createHash("sha256").update(rawKey).digest("hex");
 };
 
 export const APIKey = mongoose.model("APIKey", apiKeySchema);

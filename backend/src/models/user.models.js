@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { UserRoleEnum } from "../utils/constants.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
@@ -30,6 +31,11 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    role: {
+    type: String,
+    enum: Object.values(UserRoleEnum),
+    default: UserRoleEnum.USER,
+  },
     isEmailVerified: {
       type: Boolean,
       default: false,

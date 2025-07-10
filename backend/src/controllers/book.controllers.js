@@ -5,13 +5,17 @@ import { uploadToCloudinary } from "../utils/cloudinary.js";
 import { asyncHandler } from "../utils/async-handler.js";
 
 const createBook = asyncHandler(async (req, res) => {
+  console.log("📚 Inside createBook()");
+  console.log("req.file: ", req.file);
+  console.log("req.body: ", req.body);
   // collecting the neccessary data for creation of book
   const { title, author, isbn, description, category, price, stock } = req.body;
 
   // without cover image book is not uploaded
   if (!req.file) throw new ApiError(400, "Cover image is required");
 
-  const cloudinaryResult = await uploadToCloudinary(req.file.path, "books");
+  // const cloudinaryResult = await uploadToCloudinary(req.file.path, "books");
+  const coverImage = req.file?.path
 
   const book = await Book.create({
     title,
@@ -21,7 +25,7 @@ const createBook = asyncHandler(async (req, res) => {
     category,
     price,
     stock,
-    coverImage: cloudinaryResult.url,
+    coverImage,
     createdBy: req.user._id,
   });
 
@@ -82,4 +86,4 @@ const deleteBook = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, {}, "Book deleted"));
 });
 
-export { createBook, getAllBooks, getBookById, updateBook, deleteBook };
+export { createBook, getAllBooks, getBooksById, updateBook, deleteBook };

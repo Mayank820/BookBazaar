@@ -38,7 +38,7 @@ const bookSchema = new mongoose.Schema(
     },
     price: {
       type: Number,
-      required: true,
+      required: [true, "Price is required"],
     },
     stock: {
       type: Number,
@@ -76,7 +76,7 @@ bookSchema.index({ title: "text", author: "text", category: "text" });
 // 🧩 Virtual populate for reviews (not stored in DB)
 /**
  * What it does: -
- *  Below code creates vitual connection between: - 
+ *  Below code creates vitual connection between: -
  *  ->  The Book model (_id field)
  *  -> The Review model (book field, which should contain the ObjectId of a book)
  *
@@ -85,7 +85,6 @@ bookSchema.virtual("reviews", {
   ref: "Review",
   localField: "_id",
   foreignField: "book",
-  
 });
 
 // Ensure virtuals are included when using .toJSON() or .toObject()
