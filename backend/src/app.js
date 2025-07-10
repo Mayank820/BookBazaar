@@ -3,6 +3,7 @@ import healthCheckRouter from "./routes/healthCheck.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import bookRoutes from "./routes/book.routes.js";
 import apiKeyRoutes from "./routes/apiKey.routes.js";
+import reviewRoutes from "./routes/review.routes.js";
 import "./config/cloudinary.config.js";
 
 
@@ -14,6 +15,7 @@ app.use("/api/v1/healthcheck", healthCheckRouter);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/apiKey", apiKeyRoutes)
 app.use("/api/v1/book", bookRoutes);
+app.use("/api/v1/review", reviewRoutes)
 
 // Global error handler
 // This particular code helps to catch all thrown ApiError or unexpected exceptions and formats them consistently.

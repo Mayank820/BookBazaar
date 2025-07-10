@@ -29,6 +29,7 @@ const reviewSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// ensure a user can leave only one review per book
 reviewSchema.index({ book: 1, user: 1 }, { unique: true });
 
 export const Review = mongoose.model("Review", reviewSchema);
