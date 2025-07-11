@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-errors.js";
 import { uploadToCloudinary } from "../utils/cloudinary.js";
 import { asyncHandler } from "../utils/async-handler.js";
+import { cloudinary } from "../config/cloudinary.config.js";
 
 const createBook = asyncHandler(async (req, res) => {
   console.log("📚 Inside createBook()");
@@ -15,7 +16,7 @@ const createBook = asyncHandler(async (req, res) => {
   if (!req.file) throw new ApiError(400, "Cover image is required");
 
   // const cloudinaryResult = await uploadToCloudinary(req.file.path, "books");
-  const coverImage = req.file?.path
+  const coverImage = req.file?.path;
 
   const book = await Book.create({
     title,
@@ -47,18 +48,41 @@ const getBooksById = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, book));
 });
 
+const extractCloudinaryPublicId = (imageurl) => {
+  try {
+    const url = new URL(imageurl);
+    const parts = url.pathname.split("/"); // e.g., /image/upload/v123456/BookBazaar/books/image-name.jpg
+    const fileWithExt = parts.slice(3).join("/"); // skip `/image/upload/v...`
+    return fileWithExt.replace(/\.[^/.]+$/, ""); // remove extensions
+  } catch (error) {
+    return null;
+  }
+};
+
 const updateBook = asyncHandler(async (req, res) => {
   const book = await Book.findById(req.params.id);
 
   if (!book) throw new ApiError(404, "Book not found");
 
-  // If admin wants to change the cover image
+  // If a new image is uploaded
   if (req.file) {
-    const uploadResult = await uploadToCloudinary(req.file.path, "books");
-    book.coverImage = uploadResult.url;
+    // If old image exists
+    if (book.coverImage) {
+      if (book.coverImage.startsWith("http")) {
+        // Delete Cloudinary image
+        const publicId = extractCloudinaryPublicId(book.coverImage);
+        if (publicId) await cloudinary.uploader.destroy(publicId);
+      } else if (fs.existsSync(book.coverImage)) {
+        // Delete local image
+        fs.unlinkSync(book.coverImage);
+      }
+    }
+
+    // Save new Cloudinary image URL
+    book.coverImage = req.file.path; // set by multer-storage-cloudinary
   }
 
-  const fields = [
+  const updatableFields = [
     "title",
     "author",
     "isbn",
@@ -68,7 +92,7 @@ const updateBook = asyncHandler(async (req, res) => {
     "stock",
   ];
 
-  fields.forEach((field) => {
+  updatableFields.forEach((field) => {
     if (req.body[field]) book[field] = req.body[field];
   });
 
