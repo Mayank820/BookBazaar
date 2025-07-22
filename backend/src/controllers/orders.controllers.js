@@ -47,3 +47,6 @@ const placeOrder = asyncHandler(async (req, res) => {
     ),
   );
 });
+
+
+export { placeOrder };

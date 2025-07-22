@@ -37,3 +37,26 @@ export const isAdmin = (req, res, next) => {
   }
   next();
 };
+
+export const isLoggedIn = asyncHandler(async (req, res, next) => {
+  const token =
+    req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!token) {
+    throw new ApiError(401, "Unauthorized: Token missing");
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded._id).select("-password");
+
+    if (!user) {
+      throw new ApiError(401, "Unauthorized: User not found");
+    }
+
+    req.user = user; // ✅ Attach user to request for future use
+    next();
+  } catch (error) {
+    throw new ApiError(401, "Invalid or expired token");
+  }
+});

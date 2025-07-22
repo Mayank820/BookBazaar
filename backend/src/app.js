@@ -4,18 +4,20 @@ import authRoutes from "./routes/auth.routes.js";
 import bookRoutes from "./routes/book.routes.js";
 import apiKeyRoutes from "./routes/apiKey.routes.js";
 import reviewRoutes from "./routes/review.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
 import "./config/cloudinary.config.js";
 
-
 const app = express();
+app.use("/api/v1/payments/webhook", express.raw({ type: "application/json" }));
 app.use(express.json());
 
 // routes
 app.use("/api/v1/healthcheck", healthCheckRouter);
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/apiKey", apiKeyRoutes)
+app.use("/api/v1/apiKey", apiKeyRoutes);
 app.use("/api/v1/book", bookRoutes);
-app.use("/api/v1/review", reviewRoutes)
+app.use("/api/v1/review", reviewRoutes);
+app.use("/api/v1/payments", paymentRoutes);
 
 // Global error handler
 // This particular code helps to catch all thrown ApiError or unexpected exceptions and formats them consistently.

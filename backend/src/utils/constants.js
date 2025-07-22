@@ -38,3 +38,12 @@ export const REFUND_STATUS = {
   REQUESTED: "requested",
   COMPLETED: " completed",
 };
+
+export const PAYMENT_GATEWAY = {
+  CASHFREE: "Cashfree",
+};
+
+export const CASHFREE_BASE_URL = {
+  production: "https://api.cashfree.com",
+  sandbox: "https://sandbox.cashfree.com",
+};
